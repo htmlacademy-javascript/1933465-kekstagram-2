@@ -58,25 +58,28 @@ const getDescription = ({ adjectives, subjects, verbs, prepositions, nouns }) =>
   return `${getAdjective()} ${getSubject()} ${getVerb()} ${getReposition()} ${getNoun()}`;
 };
 
-const getCommentId = (index) => photoId.get().toString() + index.toString().padStart(3, '0');
-const getAvatar = () => `img/avatar-${getRandomNumber(Avatar.MIN, Avatar.MAX)}.svg`;
-const getComment = (v, index) => ({
-  id: getCommentId(index),
-  avatar: getAvatar(),
-  message: getRandomValue(MESSAGES),
-  name: getRandomValue(NAMES),
-});
+const getCommentId = (index, id) => id.toString() + index.toString().padStart(3, '0');
 
-const createComments = () => Array.from({ length: getRandomNumber(Comments.MIN, Comments.MAX) }, getComment);
+const getAvatar = () => `img/avatar-${getRandomNumber(Avatar.MIN, Avatar.MAX)}.svg`;
+const getComment = function (value, index) {
+  return ({
+    id: getCommentId(index, this.id),
+    avatar: getAvatar(),
+    message: getRandomValue(MESSAGES),
+    name: getRandomValue(NAMES),
+  });
+};
+
+const createComments = (id) => Array.from({ length: getRandomNumber(Comments.MIN, Comments.MAX) }, getComment, { id: id });
 const createPhoto = () => {
-  photoId.next();
   const id = photoId.get();
+  photoId.next();
   return ({
     id: id,
     url: getPhotoUrl(id),
     description: getDescription(DESCRIPTION_PARTS),
     likes: getRandomNumber(Likes.MIN, Likes.MAX),
-    comments: createComments(),
+    comments: createComments(id),
   });
 };
 
