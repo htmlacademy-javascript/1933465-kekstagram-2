@@ -1,16 +1,19 @@
 import { isEscapeKey } from './util.js';
 import { pristine } from './validator.js';
 import './image-editor.js';
+
+const body = document.querySelector('body');
+const imgUploadOverlay = document.querySelector('.img-upload__overlay');
 const form = document.querySelector('.img-upload__form');
 const image = form.querySelector('.img-upload__preview').querySelector('img');
 const sliderContainer = form.querySelector('.effect-level');
 
+
 const closeForm = () => {
-  document.querySelector('.img-upload__overlay').classList.add('hidden');
-  document.querySelector('body').classList.remove('modal-open');
+  imgUploadOverlay.classList.add('hidden');
+  body.classList.remove('modal-open');
   form.reset();
-  image.style.transform = '';
-  image.style.filter = '';
+  image.style = '';
   pristine.reset();
   document.removeEventListener('keydown', documentKeydownHandler);
 };
@@ -31,8 +34,8 @@ const closeButtonClickHandler = (evt) => {
 };
 
 const imgUploadHandler = () => {
-  document.querySelector('.img-upload__overlay').classList.remove('hidden');
-  document.querySelector('body').classList.add('modal-open');
+  imgUploadOverlay.classList.remove('hidden');
+  body.classList.add('modal-open');
   document.addEventListener('keydown', documentKeydownHandler);
   sliderContainer.classList.add('hidden');
 };

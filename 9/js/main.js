@@ -6,5 +6,4 @@ import './form.js';
 
 const gallery = new Gallery(createPhotos);
 renderPictures(gallery);
-const popup = new Popup(gallery);
-popup.attachHandlers();
+new Popup(gallery);

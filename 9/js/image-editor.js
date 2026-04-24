@@ -1,3 +1,8 @@
+const SCALE_STEP = 25;
+const ScaleBorders = {
+  MIN: 25,
+  MAX: 100,
+};
 const SliderInfo = {
   'chrome': {
     effect: 'grayscale',
@@ -34,80 +39,76 @@ const SliderInfo = {
 };
 
 const form = document.querySelector('.img-upload__form');
-const smallbtn = form.querySelector('.scale__control--smaller');
-const bigbtn = form.querySelector('.scale__control--bigger');
+const smallBtn = form.querySelector('.scale__control--smaller');
+const bigBtn = form.querySelector('.scale__control--bigger');
 const scaleValue = form.querySelector('.scale__control--value');
 const imgPreview = form.querySelector('.img-upload__preview').querySelector('img');
 
-const sliderElement = form.querySelector('.effect-level__slider');
 const sliderContainer = form.querySelector('.effect-level');
-const sliderValue = form.querySelector('.effect-level__value');
+const sliderElement = sliderContainer.querySelector('.effect-level__slider');
+const sliderValue = sliderContainer.querySelector('.effect-level__value');
 const effectsContainer = form.querySelector('.effects__list');
+let currentScale = 100;
+let currentEffect = 'none';
+let currentStyle = 'none';
 sliderContainer.classList.add('hidden');
 
+const updateScale = (modifier) => {
+  const newScale = currentScale + modifier * SCALE_STEP;
+  if (newScale < ScaleBorders.MIN || newScale > ScaleBorders.MAX) {
+    return;
+  }
+  currentScale = newScale;
+  scaleValue.value = `${currentScale}%`;
+  imgPreview.style.transform = `scale(${currentScale / 100})`;
+};
+
 const smallBtnClickHandler = () => {
-  if (scaleValue.value === '25%') {
-    return;
-  }
-  const newValue = Number(scaleValue.value.slice(0, -1)) - 25;
-  scaleValue.value = `${newValue}%`;
-  imgPreview.style.transform = `scale(${newValue / 100})`;
+  updateScale(-1);
 };
-
 const bigBtnClickHandler = () => {
-  if (scaleValue.value === '100%') {
-    return;
-  }
-  const newValue = Number(scaleValue.value.slice(0, -1)) + 25;
-  scaleValue.value = `${newValue}%`;
-  imgPreview.style.transform = `scale(${newValue / 100})`;
+  updateScale(1);
 };
 
-smallbtn.addEventListener('click', smallBtnClickHandler);
-bigbtn.addEventListener('click', bigBtnClickHandler);
+smallBtn.addEventListener('click', smallBtnClickHandler);
+bigBtn.addEventListener('click', bigBtnClickHandler);
 
 noUiSlider.create(sliderElement, {
   range: {
     min: 0,
     max: 100,
   },
-  start: 80,
+  start: 100,
   step: 1,
   format: {
-    to: function (value) {
-      if (Number.isInteger(value)) {
-        return value.toFixed(0);
-      }
-      return value.toFixed(1);
-    },
-    from: function (value) {
-      return parseFloat(value);
-    },
+    to: (value) => Number.isInteger(value) ? value.toFixed(0) : value.toFixed(1),
+    from: (value) => parseFloat(value),
   },
 });
 
-
 sliderElement.noUiSlider.on('update', () => {
-  sliderValue.value = sliderElement.noUiSlider.get();
-  imgPreview.style.filter = imgPreview.style.filter.replace(/(\d+(\.\d+)?)/, sliderValue.value);
+  if (currentEffect !== 'none') {
+    sliderValue.value = sliderElement.noUiSlider.get();
+    imgPreview.style.filter = `${currentStyle.effect}(${sliderValue.value}${currentStyle.units ?? ''})`;
+  }
 });
 
 effectsContainer.addEventListener('change', (evt) => {
-  if (evt.target.value === 'none') {
+  currentEffect = evt.target.value;
+  if (currentEffect === 'none') {
     imgPreview.style.filter = 'none';
     sliderContainer.classList.add('hidden');
     return;
   }
-  const style = SliderInfo[evt.target.value];
-  imgPreview.style.filter = `${style.effect}(${style.max}${style.units ?? ''})`;
+  currentStyle = SliderInfo[currentEffect];
   sliderElement.noUiSlider.updateOptions({
     range: {
-      min: style.min,
-      max: style.max,
+      min: currentStyle.min,
+      max: currentStyle.max,
     },
-    step: style.step,
+    step: currentStyle.step,
   });
-  sliderElement.noUiSlider.set(style.max);
+  sliderElement.noUiSlider.set(currentStyle.max);
   sliderContainer.classList.remove('hidden');
 });
 

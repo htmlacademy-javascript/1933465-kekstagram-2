@@ -1,3 +1,47 @@
+const MAX_HASHTAGS = 5;
+const MAX_HASHTAG_LENGTH = 20;
+const MAX_DESCRIPTION_LENGTH = 140;
+const REGEX = /^#[a-zа-яё0-9]+$/i;
+const VALIDATIONS = [
+  {
+    callback: (value) => value.some((hash) => !hash.startsWith('#')),
+    errorMessage: 'Хэштеги должны начинаться с символа \'#\'',
+  },
+  {
+    callback: (value) => value.some((hash) => hash.length === 1),
+    errorMessage: 'Хэштеги не должны состоять из одного символа \'#\'',
+  },
+  {
+    callback: (value) => value.some((hash) => !REGEX.test(hash)),
+    errorMessage: 'Хэштеги должны содержать только буквы и цифры',
+  },
+  {
+    callback: (value) => value.some((hash) => hash.length > MAX_HASHTAG_LENGTH),
+    errorMessage: `Длина хэштега не должна превышать ${MAX_HASHTAG_LENGTH} символов`,
+  },
+  {
+    callback: (value) => new Set(value).size !== value.length,
+    errorMessage: 'Хэштеги не должны повторяться',
+  },
+  {
+    callback: (value) => value.length > MAX_HASHTAGS,
+    errorMessage: `Количество хэштегов не должно превышать ${MAX_HASHTAGS}`,
+  },
+];
+
+class ErrorMessage {
+  error = '';
+  get() {
+    return this.error;
+  }
+
+  set(value) {
+    this.error = value;
+  }
+}
+const hashError = new ErrorMessage();
+const descriptionError = new ErrorMessage();
+
 const form = document.querySelector('.img-upload__form');
 const pristine = new Pristine(form, {
   classTo: 'img-upload__field-wrapper',
@@ -5,43 +49,41 @@ const pristine = new Pristine(form, {
   errorTextParent: 'img-upload__field-wrapper',
 });
 
+const validateDescription = (value) => {
+  if (value.length > MAX_DESCRIPTION_LENGTH) {
+    descriptionError.set(`Описание должно быть меньше ${MAX_DESCRIPTION_LENGTH} символов`);
+    return false;
+  }
+  return true;
+};
+
 const validateHashes = (value) => {
   if (value.trim().length === 0) {
     return true;
   }
-  const regex = /^#[a-zа-яё0-9]{1,19}$/i;
-  return value.split(' ').every((hash) => regex.test(hash));
-};
-const validateUniqueHashes = (value) => {
-  const normalizedHash = value.trim().split(' ').map((hash) => hash.toLowerCase());
-  return normalizedHash.length === new Set(normalizedHash).size;
-};
-const validateNumberOfHeshes = (value) => value.trim().split(' ').length <= 5;
-const validateDescription = (value) => value.length <= 140;
+  const hashes = value.trim().split(/\s+/).map((hash) => hash.toLowerCase());
 
+  if (VALIDATIONS.some((validation) => {
+    if (validation.callback(hashes)) {
+      hashError.set(validation.errorMessage);
+      return true;
+    }
+  })) {
+    return false;
+  }
+  return true;
+};
 
 pristine.addValidator(
   form.querySelector('.text__hashtags'),
   validateHashes,
-  'Хэштеги должен быть в формате #тэг'
-);
-
-pristine.addValidator(
-  form.querySelector('.text__hashtags'),
-  validateUniqueHashes,
-  'Хэштеги должны быть уникальными'
-);
-
-pristine.addValidator(
-  form.querySelector('.text__hashtags'),
-  validateNumberOfHeshes,
-  'Максимум 5 хэштегов'
+  hashError.get.bind(hashError)
 );
 
 pristine.addValidator(
   form.querySelector('.text__description'),
   validateDescription,
-  'Описание должно быть меньше 140 символов'
+  descriptionError.get.bind(descriptionError)
 );
 
 export { pristine };

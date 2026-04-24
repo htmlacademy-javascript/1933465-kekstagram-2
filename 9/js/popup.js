@@ -15,9 +15,11 @@ class Popup {
     this.commentsLoader = this.popup.querySelector('.social__comments-loader');
     this.closeButton = this.popup.querySelector('.big-picture__cancel');
     this.commentsCount = 0;
-    this.comments = [];
     this.photo = {};
+    this.attachHandlers();
   }
+
+  comments = [];
 
   createComment = (comment) => `<li class="social__comment"><img class="social__picture" alt="${comment.name}" src="${comment.avatar}"><p class="social__text">${comment.message}</p></li>`;
 
