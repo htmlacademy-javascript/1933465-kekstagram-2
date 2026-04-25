@@ -4,7 +4,7 @@ class Popup {
   constructor(gallery) {
     this.gallery = gallery;
     this.picturesContainer = document.querySelector('.pictures');
-    this.body = document.querySelector('body');
+    this.body = document.body;
     this.popup = document.querySelector('.big-picture');
     this.img = this.popup.querySelector('.big-picture__img').querySelector('img');
     this.likesCount = this.popup.querySelector('.likes-count');

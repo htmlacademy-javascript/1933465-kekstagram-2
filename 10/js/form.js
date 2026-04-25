@@ -3,6 +3,7 @@ import { pristine } from './validator.js';
 import { sendData } from './api.js';
 import './image-editor.js';
 import { createNotification } from './notification.js';
+import { editorReset } from './image-editor.js';
 
 const SendButtonText = {
   DEFAULT: 'Опубликовать',
@@ -13,7 +14,6 @@ const body = document.body;
 const imgUploadOverlay = document.querySelector('.img-upload__overlay');
 const form = document.querySelector('.img-upload__form');
 const sendButton = form.querySelector('.img-upload__submit');
-const image = form.querySelector('.img-upload__preview').querySelector('img');
 const sliderContainer = form.querySelector('.effect-level');
 const successTemplate = document.querySelector('#success');
 const errorTemplate = document.querySelector('#error');
@@ -22,7 +22,7 @@ const closeForm = () => {
   imgUploadOverlay.classList.add('hidden');
   body.classList.remove('modal-open');
   form.reset();
-  image.style = '';
+  editorReset();
   pristine.reset();
   document.removeEventListener('keydown', documentKeydownHandler);
 };
@@ -42,7 +42,7 @@ const closeButtonClickHandler = (evt) => {
   closeForm();
 };
 
-const imgUploadHandler = () => {
+const imgUploadChangeHandler = () => {
   imgUploadOverlay.classList.remove('hidden');
   body.classList.add('modal-open');
   document.addEventListener('keydown', documentKeydownHandler);
@@ -56,26 +56,22 @@ const onError = () => {
   createNotification(errorTemplate);
 };
 
-const disableButton = () => {
-  sendButton.disabled = true;
-  sendButton.textContent = SendButtonText.SENDING;
-};
-const enableButton = () => {
-  sendButton.disabled = false;
-  sendButton.textContent = SendButtonText.DEFAULT;
+const toggleButtonState = (state) => {
+  sendButton.disabled = state;
+  sendButton.textContent = state ? SendButtonText.SENDING : SendButtonText.DEFAULT;
 };
 
 const sendFormData = async (formElement) => {
   if (pristine.validate()) {
     const formData = new FormData(formElement);
-    disableButton();
+    toggleButtonState(true);
     try {
       await sendData(formData);
       onSuccess();
-    }catch (error) {
+    } catch (error) {
       onError();
     } finally {
-      enableButton();
+      toggleButtonState(false);
     }
   }
 };
@@ -85,7 +81,7 @@ const formSubmitHandler = (evt) => {
   sendFormData(evt.target);
 };
 
-form.querySelector('.img-upload__input').addEventListener('change', imgUploadHandler);
+form.querySelector('.img-upload__input').addEventListener('change', imgUploadChangeHandler);
 
 form.addEventListener('submit', formSubmitHandler);
 

@@ -53,6 +53,11 @@ let currentEffect = 'none';
 let currentStyle = 'none';
 sliderContainer.classList.add('hidden');
 
+const editorReset = () => {
+  currentScale = 100;
+  imgPreview.style = '';
+};
+
 const updateScale = (modifier) => {
   const newScale = currentScale + modifier * SCALE_STEP;
   if (newScale < ScaleBorders.MIN || newScale > ScaleBorders.MAX) {
@@ -112,3 +117,4 @@ effectsContainer.addEventListener('change', (evt) => {
   sliderContainer.classList.remove('hidden');
 });
 
+export { editorReset };
