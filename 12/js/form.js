@@ -18,7 +18,8 @@ const sendButton = form.querySelector('.img-upload__submit');
 const sliderContainer = form.querySelector('.effect-level');
 const successTemplate = document.querySelector('#success');
 const errorTemplate = document.querySelector('#error');
-const preview = form.querySelector('.img-upload__preview').querySelector('img');
+const uploadPreview = form.querySelector('.img-upload__preview').querySelector('img');
+const uploadPreviewEffects = form.querySelectorAll('.effects__preview');
 
 const closeForm = () => {
   imgUploadOverlay.classList.add('hidden');
@@ -47,7 +48,12 @@ const closeButtonClickHandler = (evt) => {
 const updatePreview = (target) => {
   const file = target.files[0];
   if (FILE_TYPES.includes(file.type)) {
-    preview.src = URL.createObjectURL(file);
+    const url = URL.createObjectURL(file);
+    uploadPreview.src = url;
+
+    uploadPreviewEffects.forEach((element) => {
+      element.style.backgroundImage = `url(${url})`;
+    });
   }
 };
 
