@@ -1,15 +1,14 @@
 import { isEscapeKey } from './util.js';
 import { pristine } from './validator.js';
 import { sendData } from './api.js';
-import './image-editor.js';
 import { createNotification } from './notification.js';
 import { editorReset } from './image-editor.js';
 
+const FILE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
 const SendButtonText = {
   DEFAULT: 'Опубликовать',
   SENDING: 'Публикация...',
 };
-const FILE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
 
 const body = document.body;
 const imgUploadOverlay = document.querySelector('.img-upload__overlay');

@@ -1,4 +1,3 @@
-
 const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 const pictureContainer = document.querySelector('.pictures');
 let picturesFragment;

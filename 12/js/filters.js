@@ -1,4 +1,3 @@
-import { renderPictures } from './pictures-renderer.js';
 import { debounce } from './util.js';
 
 const RANDOM_COUNT = 10;
@@ -9,13 +8,15 @@ const Filters = {
   'filter-random': (elements) => elements.toSorted(() => Math.random() - 0.5).slice(0, RANDOM_COUNT),
   'filter-discussed': (elements) => elements.toSorted((a, b) => b.comments - a.comments),
 };
-const debouncedRenderPictures = debounce(renderPictures, RERENDER_DELAY);
+let debouncedRenderPictures;
 
 const filters = document.querySelector('.img-filters');
 const filtersForm = filters.querySelector('.img-filters__form');
-const buttons = filtersForm.querySelectorAll('.img-filters__button');
 
-const buttonClickHandler = (evt, gallery) => {
+const filtersFormClickHandler = (evt, gallery) => {
+  if(!evt.target.classList.contains('img-filters__button')) {
+    return;
+  }
   evt.preventDefault();
   const targetButton = evt.target;
   const activeButton = filtersForm.querySelector(`.${BUTTON_ACTIVE_CLASS}`);
@@ -29,15 +30,14 @@ const buttonClickHandler = (evt, gallery) => {
 };
 
 const buttonsAttachHandlers = (gallery) => {
-  buttons.forEach((button) => {
-    button.addEventListener('click', (evt) => {
-      buttonClickHandler(evt, gallery);
-    });
+  filtersForm.addEventListener('click', (evt) => {
+    filtersFormClickHandler(evt, gallery);
   });
 };
-const showFilters = (gallery) => {
+const showFilters = (gallery, callback) => {
+  debouncedRenderPictures = debounce(callback, RERENDER_DELAY);
   filters.classList.remove('img-filters--inactive');
   buttonsAttachHandlers(gallery);
 };
 
-export { showFilters, buttonsAttachHandlers };
+export { showFilters };
