@@ -4,10 +4,10 @@ const body = document.body;
 
 const closeNotification = (evt) => {
   evt.stopPropagation();
-  const element = document.querySelector('.success') || document.querySelector('.error');
-  const closeButton = element.querySelector('.success__button') || element.querySelector('.error__button');
-  if (evt.target === element || evt.target === closeButton || isEscapeKey(evt)) {
-    element.remove();
+  const notification = document.querySelector('.success') || document.querySelector('.error');
+  const closeButton = notification.querySelector('.success__button') || notification.querySelector('.error__button');
+  if (evt.target === notification || evt.target === closeButton || isEscapeKey(evt)) {
+    notification.remove();
     body.removeEventListener('click', bodyClickHandler);
     body.removeEventListener('keydown', bodyKeydownHandler);
   }

@@ -45,7 +45,7 @@ const scaleValue = form.querySelector('.scale__control--value');
 const imgPreview = form.querySelector('.img-upload__preview').querySelector('img');
 
 const sliderContainer = form.querySelector('.effect-level');
-const sliderElement = sliderContainer.querySelector('.effect-level__slider');
+const slider = sliderContainer.querySelector('.effect-level__slider');
 const sliderValue = sliderContainer.querySelector('.effect-level__value');
 const effectsContainer = form.querySelector('.effects');
 let currentScale = 100;
@@ -79,7 +79,7 @@ const bigBtnClickHandler = () => {
 smallBtn.addEventListener('click', smallBtnClickHandler);
 bigBtn.addEventListener('click', bigBtnClickHandler);
 
-noUiSlider.create(sliderElement, {
+noUiSlider.create(slider, {
   range: {
     min: 0,
     max: 100,
@@ -93,9 +93,9 @@ noUiSlider.create(sliderElement, {
   },
 });
 
-sliderElement.noUiSlider.on('update', () => {
+slider.noUiSlider.on('update', () => {
   if (currentEffect !== 'none') {
-    sliderValue.value = sliderElement.noUiSlider.get();
+    sliderValue.value = slider.noUiSlider.get();
     imgPreview.style.filter = `${currentStyle.effect}(${sliderValue.value}${currentStyle.units ?? ''})`;
   }
 });
@@ -108,14 +108,14 @@ effectsContainer.addEventListener('change', (evt) => {
     return;
   }
   currentStyle = SliderInfo[currentEffect];
-  sliderElement.noUiSlider.updateOptions({
+  slider.noUiSlider.updateOptions({
     range: {
       min: currentStyle.min,
       max: currentStyle.max,
     },
     step: currentStyle.step,
   });
-  sliderElement.noUiSlider.set(currentStyle.max);
+  slider.noUiSlider.set(currentStyle.max);
   sliderContainer.classList.remove('hidden');
 });
 

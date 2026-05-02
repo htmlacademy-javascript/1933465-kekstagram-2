@@ -35,7 +35,7 @@ let errorMessage = '';
 
 const pristine = new Pristine(form, {
   classTo: 'img-upload__field-wrapper',
-  errorTextClass: '.img-upload__field-wrapper--error',
+  errorTextClass: 'img-upload__field-wrapper--error',
   errorTextParent: 'img-upload__field-wrapper',
 });
 

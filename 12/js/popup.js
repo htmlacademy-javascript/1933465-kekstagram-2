@@ -16,18 +16,18 @@ class Popup {
     this.commentTemplate = this.popup.querySelector('.social__comment');
     this.closeButton = this.popup.querySelector('.big-picture__cancel');
     this.commentsCount = 0;
+    this.comments = [];
     this.photo = {};
     this.attachHandlers();
   }
 
-  comments = [];
-
   createComment = (comment) => {
-    const commentElement = this.commentTemplate.cloneNode(true);
-    commentElement.querySelector('.social__picture').src = comment.avatar;
-    commentElement.querySelector('.social__picture').alt = comment.name;
-    commentElement.querySelector('.social__text').textContent = comment.message;
-    return commentElement;
+    const commentTemplate = this.commentTemplate.cloneNode(true);
+    const socialPicture = commentTemplate.querySelector('.social__picture');
+    socialPicture.src = comment.avatar;
+    socialPicture.alt = comment.name;
+    commentTemplate.querySelector('.social__text').textContent = comment.message;
+    return commentTemplate;
   };
 
   addComments = () => {

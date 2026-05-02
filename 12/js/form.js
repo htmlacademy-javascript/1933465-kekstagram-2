@@ -50,8 +50,8 @@ const updatePreview = (target) => {
     const url = URL.createObjectURL(file);
     uploadPreview.src = url;
 
-    uploadPreviewEffects.forEach((element) => {
-      element.style.backgroundImage = `url(${url})`;
+    uploadPreviewEffects.forEach((effectPreview) => {
+      effectPreview.style.backgroundImage = `url(${url})`;
     });
   }
 };
@@ -76,9 +76,9 @@ const toggleButtonState = (state) => {
   sendButton.textContent = state ? SendButtonText.SENDING : SendButtonText.DEFAULT;
 };
 
-const sendFormData = async (formElement) => {
+const sendFormData = async () => {
   if (pristine.validate()) {
-    const formData = new FormData(formElement);
+    const formData = new FormData(form);
     toggleButtonState(true);
     try {
       await sendData(formData);
@@ -93,7 +93,7 @@ const sendFormData = async (formElement) => {
 
 const formSubmitHandler = (evt) => {
   evt.preventDefault();
-  sendFormData(evt.target);
+  sendFormData();
 };
 
 form.querySelector('.img-upload__input').addEventListener('change', imgUploadChangeHandler);
