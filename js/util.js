@@ -2,14 +2,16 @@ const REMOVE_MESSAGE_TIMEOUT = 5000;
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
+const errorTemplate = document.querySelector('#data-error').content.querySelector('.data-error');
+const body = document.body;
+
 const showErrorMessage = () => {
-  const errorTemplate = document.querySelector('#data-error').content.querySelector('.data-error');
   const error = errorTemplate.cloneNode(true);
-  document.body.append(error);
+  body.append(error);
   setTimeout(() => error.remove(), REMOVE_MESSAGE_TIMEOUT);
 };
 
-function debounce (callback, timeoutDelay = 500) {
+function debounce(callback, timeoutDelay = 500) {
   let timeoutId;
 
   return (...rest) => {
